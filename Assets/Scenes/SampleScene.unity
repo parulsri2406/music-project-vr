@@ -1170,7 +1170,7 @@ MonoBehaviour:
   layers:
   - {fileID: 1557870292}
   - {fileID: 1557870291}
-  - {fileID: 1557870291}
+  - {fileID: 1557870290}
   - {fileID: 1557870289}
 --- !u!1 &1670615804
 GameObject:
