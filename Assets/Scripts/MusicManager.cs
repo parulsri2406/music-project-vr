@@ -11,4 +11,9 @@ public class MusicManager : MonoBehaviour
             layer.Play();
         }
     }
+
+    public AudioSource GetLayer(int index)
+    {
+        return layers[index];
+    }
 }
