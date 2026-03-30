@@ -4,18 +4,22 @@ public class TriggerZoneScript : MonoBehaviour
 {
     void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Player"))
+        Transform player = other.transform.root;
+
+        if (player.CompareTag("Player"))
         {
-            Renderer playerRenderer = other.GetComponent<Renderer>();
+            Renderer playerRenderer = player.GetComponentInChildren<Renderer>();
             playerRenderer.material.color = Color.green;
         }
     }
 
     void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Player"))
+        Transform player = other.transform.root;
+
+        if (player.CompareTag("Player"))
         {
-            Renderer playerRenderer = other.GetComponent<Renderer>();
+            Renderer playerRenderer = player.GetComponentInChildren<Renderer>();
             playerRenderer.material.color = Color.white;
         }
     }
