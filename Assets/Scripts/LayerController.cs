@@ -17,7 +17,7 @@ public class LayerController : MonoBehaviour
     private Coroutine fadeCoroutine;
     private Coroutine glowCoroutine;
 
-    private Material glowMat; 
+    private Material glowMat;
 
     void Start()
     {
@@ -31,13 +31,9 @@ public class LayerController : MonoBehaviour
         }
     }
 
-    // 🔥 NEW: Called when user grabs object
-    public void ActivateLayer()
+    public void ToggleLayer()
     {
-        Debug.Log("ACTIVATE LAYER CALLED");
-        if (isOn) return;
-
-        isOn = true;
+        Debug.Log("TOGGLE LAYER CALLED");
 
         AudioSource layer = musicManager.GetLayer(layerIndex);
 
@@ -47,19 +43,28 @@ public class LayerController : MonoBehaviour
         if (glowCoroutine != null)
             StopCoroutine(glowCoroutine);
 
-        fadeCoroutine = StartCoroutine(FadeIn(layer));
-        glowCoroutine = StartCoroutine(GlowTo(glowOnAlpha));
+        if (!isOn)
+        {
+            // TURN ON
+            isOn = true;
 
-        if (floatMotion != null)
-            floatMotion.shouldRotate = true;
-    }
+            fadeCoroutine = StartCoroutine(FadeIn(layer));
+            glowCoroutine = StartCoroutine(GlowTo(glowOnAlpha));
 
-    // 🔥 NEW: Called when user throws (locks)
-    public void LockLayer()
-    {
-        // For now just ensure it's stable and active
-        if (floatMotion != null)
-            floatMotion.shouldRotate = true;
+            if (floatMotion != null)
+                floatMotion.shouldRotate = true;
+        }
+        else
+        {
+            // TURN OFF
+            isOn = false;
+
+            fadeCoroutine = StartCoroutine(FadeOut(layer));
+            glowCoroutine = StartCoroutine(GlowTo(glowOffAlpha));
+
+            if (floatMotion != null)
+                floatMotion.shouldRotate = false;
+        }
     }
 
     IEnumerator FadeIn(AudioSource layer)
@@ -117,4 +122,13 @@ public class LayerController : MonoBehaviour
         currentColor.a = targetAlpha;
         glowMat.color = currentColor;
     }
+    public void ActivateLayer()
+{
+    ToggleLayer();
+}
+
+public void LockLayer()
+{
+    // optional, keep empty or reuse toggle
+}
 }
