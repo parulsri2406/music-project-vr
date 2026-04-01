@@ -13,28 +13,29 @@ public class FloatMotion : MonoBehaviour
     private Vector3 startPos;
     private bool isGrabbed = false;
 
-    private XRGrabInteractable grab;
-
-    void Awake()
-    {
-        grab = GetComponent<XRGrabInteractable>();
-    }
+    private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grab;
 
     void Start()
     {
+        grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
+
+        // if no grab interactable act normal
+        if (grab != null)
+        {
+            grab.selectEntered.AddListener(OnGrab);
+            grab.selectExited.AddListener(OnRelease);
+        }
+
         startPos = transform.localPosition;
     }
 
-    void OnEnable()
+    void OnDestroy()
     {
-        grab.selectEntered.AddListener(OnGrab);
-        grab.selectExited.AddListener(OnRelease);
-    }
-
-    void OnDisable()
-    {
-        grab.selectEntered.RemoveListener(OnGrab);
-        grab.selectExited.RemoveListener(OnRelease);
+        if (grab != null)
+        {
+            grab.selectEntered.RemoveListener(OnGrab);
+            grab.selectExited.RemoveListener(OnRelease);
+        }
     }
 
     void OnGrab(SelectEnterEventArgs args)
@@ -45,23 +46,22 @@ public class FloatMotion : MonoBehaviour
     void OnRelease(SelectExitEventArgs args)
     {
         isGrabbed = false;
-
-        // Reset base position when released (so float resumes cleanly)
         startPos = transform.localPosition;
     }
 
     void Update()
     {
-        // ONLY float when NOT grabbed
-        if (!isGrabbed)
-        {
-            float offset = Mathf.Sin(Time.time * speed) * amplitude;
-            transform.localPosition = startPos + new Vector3(0, offset, 0);
+        // if object can be grabbed and is grabbed → do nothing
+        if (grab != null && isGrabbed)
+            return;
 
-            if (shouldRotate)
-            {
-                transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f);
-            }
+        // Otherwise float normally
+        float offset = Mathf.Sin(Time.time * speed) * amplitude;
+        transform.localPosition = startPos + new Vector3(0, offset, 0);
+
+        if (shouldRotate)
+        {
+            transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f);
         }
     }
 }
