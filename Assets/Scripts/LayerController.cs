@@ -16,56 +16,61 @@ public class LayerController : MonoBehaviour
     private bool isOn = false;
     private Coroutine fadeCoroutine;
     private Coroutine glowCoroutine;
-
+    private Quaternion initialRotation;
     private Material glowMat;
 
     void Start()
-    {
-        if (glowRenderer != null)
-        {
-            glowMat = glowRenderer.material;
+{
+    initialRotation = transform.rotation;
 
-            Color c = glowMat.color;
-            c.a = glowOffAlpha;
-            glowMat.color = c;
-        }
+    if (glowRenderer != null)
+    {
+        glowMat = glowRenderer.material;
+
+        Color c = glowMat.color;
+        c.a = glowOffAlpha;
+        glowMat.color = c;
     }
+}
 
     public void ToggleLayer()
+{
+    Debug.Log("TOGGLE LAYER CALLED");
+
+    AudioSource layer = musicManager.GetLayer(layerIndex);
+
+    if (fadeCoroutine != null)
+        StopCoroutine(fadeCoroutine);
+
+    if (glowCoroutine != null)
+        StopCoroutine(glowCoroutine);
+
+    if (!isOn)
     {
-        Debug.Log("TOGGLE LAYER CALLED");
+        // TURN ON
+        isOn = true;
 
-        AudioSource layer = musicManager.GetLayer(layerIndex);
+        fadeCoroutine = StartCoroutine(FadeIn(layer));
+        glowCoroutine = StartCoroutine(GlowTo(glowOnAlpha));
 
-        if (fadeCoroutine != null)
-            StopCoroutine(fadeCoroutine);
-
-        if (glowCoroutine != null)
-            StopCoroutine(glowCoroutine);
-
-        if (!isOn)
-        {
-            // TURN ON
-            isOn = true;
-
-            fadeCoroutine = StartCoroutine(FadeIn(layer));
-            glowCoroutine = StartCoroutine(GlowTo(glowOnAlpha));
-
-            if (floatMotion != null)
-                floatMotion.shouldRotate = true;
-        }
-        else
-        {
-            // TURN OFF
-            isOn = false;
-
-            fadeCoroutine = StartCoroutine(FadeOut(layer));
-            glowCoroutine = StartCoroutine(GlowTo(glowOffAlpha));
-
-            if (floatMotion != null)
-                floatMotion.shouldRotate = false;
-        }
+        if (floatMotion != null)
+            floatMotion.shouldRotate = true;
     }
+    else
+    {
+        // TURN OFF
+        isOn = false;
+
+        fadeCoroutine = StartCoroutine(FadeOut(layer));
+        glowCoroutine = StartCoroutine(GlowTo(glowOffAlpha));
+
+        if (floatMotion != null)
+            floatMotion.shouldRotate = false;
+
+        // 👇 Snap back to original rotation
+        StartCoroutine(ResetRotation());
+    }
+}
 
     IEnumerator FadeIn(AudioSource layer)
     {
@@ -96,7 +101,21 @@ public class LayerController : MonoBehaviour
 
         layer.volume = 0f;
     }
+    IEnumerator ResetRotation()
+{
+    Quaternion startRot = transform.rotation;
+    float time = 0f;
+    float duration = 0.5f;
 
+    while (time < duration)
+    {
+        transform.rotation = Quaternion.Slerp(startRot, initialRotation, time / duration);
+        time += Time.deltaTime;
+        yield return null;
+    }
+
+    transform.rotation = initialRotation;
+}
     IEnumerator GlowTo(float targetAlpha)
     {
         if (glowMat == null) yield break;
