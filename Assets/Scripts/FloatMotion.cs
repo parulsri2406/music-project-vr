@@ -9,7 +9,10 @@ public class FloatMotion : MonoBehaviour
     [Header("Rotation")]
     public float rotationSpeed = 20f;
     public bool shouldRotate = false;
-    public  float minY = 0.1f; 
+
+    [Header("Floor Clamp")]
+    public float minY = 0.15f; 
+
     private Vector3 startPos;
     private bool isGrabbed = false;
 
@@ -19,7 +22,6 @@ public class FloatMotion : MonoBehaviour
     {
         grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
 
-        // if no grab interactable act normal
         if (grab != null)
         {
             grab.selectEntered.AddListener(OnGrab);
@@ -46,28 +48,28 @@ public class FloatMotion : MonoBehaviour
     void OnRelease(SelectExitEventArgs args)
     {
         isGrabbed = false;
-        startPos = transform.localPosition;
+        startPos = transform.position;
     }
 
-   void Update()
-{
-    if (grab != null && isGrabbed)
-        return;
-
-    float offset = Mathf.Sin(Time.time * speed) * amplitude;
-    transform.localPosition = startPos + new Vector3(0, offset, 0);
-
-    if (shouldRotate)
+    void Update()
     {
-        transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f);
-    }
+        // FLOAT only when NOT grabbed
+        if (!(grab != null && isGrabbed))
+        {
+            float offset = Mathf.Sin(Time.time * speed) * amplitude;
+            transform.position = startPos + new Vector3(0, offset, 0);
 
-    Vector3 pos = transform.position;
-    if (pos.y < minY)
-    {
-        pos.y = minY;
-        transform.position = pos;
+            if (shouldRotate)
+            {
+                transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f);
+            }
+        }
+
+        Vector3 pos = transform.position;
+        if (pos.y < minY)
+        {
+            pos.y = minY;
+            transform.position = pos;
+        }
     }
-}
-  
 }

@@ -336,6 +336,7 @@ Transform:
   m_Children:
   - {fileID: 263507936}
   - {fileID: 332095037}
+  - {fileID: 1860888587}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: -35, y: 0, z: 0}
 --- !u!114 &29100027
@@ -410,7 +411,7 @@ MonoBehaviour:
   m_StartingHoverFilters: []
   m_StartingSelectFilters: []
   m_StartingInteractionStrengthFilters: []
-  m_AttachTransform: {fileID: 0}
+  m_AttachTransform: {fileID: 1860888587}
   m_SecondaryAttachTransform: {fileID: 0}
   m_UseDynamicAttach: 0
   m_MatchAttachPosition: 1
@@ -484,9 +485,9 @@ Rigidbody:
   m_ImplicitTensor: 1
   m_UseGravity: 0
   m_IsKinematic: 0
-  m_Interpolate: 0
+  m_Interpolate: 1
   m_Constraints: 0
-  m_CollisionDetection: 0
+  m_CollisionDetection: 2
 --- !u!114 &29100029
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -515,6 +516,7 @@ MonoBehaviour:
   speed: 1.55
   rotationSpeed: 20
   shouldRotate: 0
+  minY: 0.9
 --- !u!1 &145313318
 GameObject:
   m_ObjectHideFlags: 0
@@ -1166,6 +1168,7 @@ MonoBehaviour:
   speed: 1.1
   rotationSpeed: 20
   shouldRotate: 0
+  minY: 0
 --- !u!54 &383543624
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1651,6 +1654,7 @@ MonoBehaviour:
   speed: 1
   rotationSpeed: 20
   shouldRotate: 0
+  minY: 0
 --- !u!114 &547706392
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2148,6 +2152,7 @@ MonoBehaviour:
   speed: 0.6
   rotationSpeed: 20
   shouldRotate: 0
+  minY: 0
 --- !u!54 &717129563
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3091,7 +3096,7 @@ GameObject:
   - component: {fileID: 833891440}
   - component: {fileID: 833891439}
   m_Layer: 0
-  m_Name: Plane
+  m_Name: Floor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3181,7 +3186,7 @@ Transform:
   m_GameObject: {fileID: 833891438}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0.5, z: 0.45}
+  m_LocalPosition: {x: 0, y: 0.1, z: 0.45}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -4499,6 +4504,37 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 816e07ea981b65948ba2b69dc358d4a8, type: 3}
+--- !u!1 &1860888586
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1860888587}
+  m_Layer: 0
+  m_Name: AttachPoint
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1860888587
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1860888586}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: -0.04, y: -0.25, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 29100025}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1889954738
 PrefabInstance:
   m_ObjectHideFlags: 0
