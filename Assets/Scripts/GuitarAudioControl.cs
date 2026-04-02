@@ -1,41 +1,47 @@
 using UnityEngine;
-using UnityEngine.XR.Interaction.Toolkit;
 
-public class GuitarAudioController : MonoBehaviour
+public class GuitarAudioControl : MonoBehaviour
 {
-    private UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable grab;
     private AudioSource audioSource;
+
+    [Header("Height Volume Control")]
+    public float minY = 1.4f;   // floor level
+    public float maxY = 5.5f;   // max
+
+    public float smoothSpeed = 5f;
 
     void Start()
     {
-        grab = GetComponent<UnityEngine.XR.Interaction.Toolkit.Interactables.XRGrabInteractable>();
         audioSource = GetComponent<AudioSource>();
-
-        Debug.Log("Audio script started on " + gameObject.name);
-
-        if (grab != null)
-        {
-            grab.selectEntered.AddListener(OnGrab);
-        }
-        else
-        {
-            Debug.LogError("XRGrabInteractable NOT found!");
-        }
 
         if (audioSource == null)
         {
             Debug.LogError("AudioSource NOT found!");
+            return;
         }
+
+        audioSource.volume = 0f;
+        audioSource.Play(); // play once, never restart
     }
 
-    void OnGrab(SelectEnterEventArgs args)
+   void Update()
+{
+    float y = transform.position.y;
+
+    float normalized = Mathf.InverseLerp(minY, maxY, y);
+    if (normalized < 0.2f)
     {
-        Debug.Log("GUITAR GRABBED");
-
-        if (audioSource != null)
-        {
-            audioSource.volume = 1f;
-            audioSource.Play();
-        }
+        audioSource.volume = 0f;
+        return;
     }
+    float adjusted = (normalized - 0.2f) / (1f - 0.2f);
+
+    float targetVolume = adjusted;
+
+    audioSource.volume = Mathf.Lerp(
+        audioSource.volume,
+        targetVolume,
+        Time.deltaTime * smoothSpeed
+    );
+}
 }
