@@ -9,7 +9,7 @@ public class FloatMotion : MonoBehaviour
     [Header("Rotation")]
     public float rotationSpeed = 20f;
     public bool shouldRotate = false;
-
+    public  float minY = 0.1f; 
     private Vector3 startPos;
     private bool isGrabbed = false;
 
@@ -49,19 +49,25 @@ public class FloatMotion : MonoBehaviour
         startPos = transform.localPosition;
     }
 
-    void Update()
+   void Update()
+{
+    if (grab != null && isGrabbed)
+        return;
+
+    float offset = Mathf.Sin(Time.time * speed) * amplitude;
+    transform.localPosition = startPos + new Vector3(0, offset, 0);
+
+    if (shouldRotate)
     {
-        // if object can be grabbed and is grabbed → do nothing
-        if (grab != null && isGrabbed)
-            return;
-
-        // Otherwise float normally
-        float offset = Mathf.Sin(Time.time * speed) * amplitude;
-        transform.localPosition = startPos + new Vector3(0, offset, 0);
-
-        if (shouldRotate)
-        {
-            transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f);
-        }
+        transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f);
     }
+
+    Vector3 pos = transform.position;
+    if (pos.y < minY)
+    {
+        pos.y = minY;
+        transform.position = pos;
+    }
+}
+  
 }
