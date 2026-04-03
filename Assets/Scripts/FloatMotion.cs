@@ -6,12 +6,8 @@ public class FloatMotion : MonoBehaviour
     public float amplitude = 0.1f;
     public float speed = 1f;
 
-    [Header("Rotation")]
     public float rotationSpeed = 20f;
     public bool shouldRotate = false;
-
-    [Header("Floor Clamp")]
-    public float minY = 0.15f; 
 
     private Vector3 startPos;
     private bool isGrabbed = false;
@@ -28,7 +24,7 @@ public class FloatMotion : MonoBehaviour
             grab.selectExited.AddListener(OnRelease);
         }
 
-        startPos = transform.localPosition;
+        startPos = transform.position;
     }
 
     void OnDestroy()
@@ -52,24 +48,16 @@ public class FloatMotion : MonoBehaviour
     }
 
     void Update()
+{
+    if (isGrabbed)
+        return;
+
+    float offset = Mathf.Sin(Time.time * speed) * amplitude;
+    transform.position = startPos + new Vector3(0, offset, 0);
+
+    if (shouldRotate)
     {
-        // FLOAT only when NOT grabbed
-        if (!(grab != null && isGrabbed))
-        {
-            float offset = Mathf.Sin(Time.time * speed) * amplitude;
-            transform.position = startPos + new Vector3(0, offset, 0);
-
-            if (shouldRotate)
-            {
-                transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f);
-            }
-        }
-
-        Vector3 pos = transform.position;
-        if (pos.y < minY)
-        {
-            pos.y = minY;
-            transform.position = pos;
-        }
+        transform.Rotate(0f, rotationSpeed * Time.deltaTime, 0f);
     }
+}
 }
