@@ -14,23 +14,16 @@ public class DrumZoneTrigger : MonoBehaviour
     }
 
     private void OnTriggerEnter(Collider other)
+{
+    if (!other.name.Contains("Controller")) return;
+
+    spawner.SpawnDrumstick();
+
+    if (loopSource != null && !loopSource.isPlaying)
     {
-        Debug.Log("Entered by: " + other.name);
-
-        // Only react to controllers (safe check)
-        if (!other.name.Contains("Controller")) return;
-
-        if (!hasSpawned)
-        {
-            spawner.SpawnDrumstick();
-            hasSpawned = true;
-        }
-
-        if (loopSource != null && !loopSource.isPlaying)
-        {
-            loopSource.Play();
-        }
+        loopSource.Play();
     }
+}
 
     private void OnTriggerExit(Collider other)
     {
