@@ -6,6 +6,7 @@ TagManager:
   tags:
   - Ball
   - Drumstick
+  - Hand
   layers:
   - Default
   - TransparentFX
