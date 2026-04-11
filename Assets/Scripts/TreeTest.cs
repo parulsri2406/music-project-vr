@@ -9,8 +9,7 @@ public class TreeTest : MonoBehaviour
     private bool isInside = false;
     private Material treeMaterial;
 
-    private float currentGlow = 0.1f;
-    private float boost = 0f;
+    private float currentGlow = 0.05f;
 
     private void Start()
     {
@@ -19,20 +18,16 @@ public class TreeTest : MonoBehaviour
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.CompareTag("Hand") && !isInside)
+        if (other.CompareTag("Hand"))
         {
             isInside = true;
-            Debug.Log("Controller detected!");
             energyParticles.Play();
-
-            // Quick noticeable glow boost
-            boost = 0.8f;
         }
     }
 
     private void OnTriggerExit(Collider other)
     {
-        if (other.CompareTag("Hand") && isInside)
+        if (other.CompareTag("Hand"))
         {
             isInside = false;
             energyParticles.Stop();
@@ -43,13 +38,10 @@ public class TreeTest : MonoBehaviour
     {
         if (isInside && hand != null)
         {
-            // Move particles to hand
             energyParticles.transform.position = hand.position;
 
-            // Direction from hand to tree
             Vector3 dir = (transform.position - hand.position).normalized;
 
-            // Apply velocity
             var velocity = energyParticles.velocityOverLifetime;
             velocity.enabled = true;
             velocity.space = ParticleSystemSimulationSpace.World;
@@ -58,21 +50,20 @@ public class TreeTest : MonoBehaviour
             velocity.z = dir.z;
         }
 
-        // Smooth glow transition
-        float targetGlow = isInside ? 1.2f : 0.1f;
-        currentGlow = Mathf.Lerp(currentGlow, targetGlow, Time.deltaTime * 2f);
+  
+        float targetGlow = isInside ? 1.8f : 0.02f;
+        currentGlow = Mathf.Lerp(currentGlow, targetGlow, Time.deltaTime * 0.8f);
 
-        // Slower pulse
-        float pulse = isInside ? Mathf.Sin(Time.time * 1.5f) * 0.15f : 0f;
+        //pulse effect?
+        float pulse = isInside ? Mathf.Sin(Time.time * 1.2f) * 0.5f : 0f;
 
-        // Decaying boost (makes interaction noticeable)
-        boost = Mathf.Lerp(boost, 0f, Time.deltaTime * 2f);
+        float finalGlow = currentGlow + pulse;
 
-        // Slightly warm green
-        Color warmGreen = new Color(0.2f, 0.6f, 0.3f);
+        Color idleColor = new Color(0.08f, 0.25f, 0.12f);   // dark green
+        Color activeColor = new Color(0.4f, 0.8f, 0.3f);    // brighter + slightly yellow-green
 
-        // Final glow
-        float finalGlow = currentGlow + pulse + boost;
-        treeMaterial.SetColor("_EmissionColor", warmGreen * finalGlow);
+        Color finalColor = Color.Lerp(idleColor, activeColor, Mathf.Clamp01(currentGlow));
+
+        treeMaterial.SetColor("_EmissionColor", finalColor * finalGlow);
     }
 }
