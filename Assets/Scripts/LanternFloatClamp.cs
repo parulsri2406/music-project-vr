@@ -2,8 +2,7 @@ using UnityEngine;
 
 public class LanternFloatClamp : MonoBehaviour
 {
-    public float minY = 0.115f; // set this to your pond surface height
-
+    public float minY = 0.115f; 
     void Update()
     {
         if (transform.position.y < minY)

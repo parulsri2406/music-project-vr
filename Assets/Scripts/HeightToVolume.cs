@@ -6,8 +6,8 @@ public class HeightToVolume : MonoBehaviour
     public AudioSource audioSource;
 
     [Header("Height Settings")]
-    public float minY = 0f;
-    public float maxY = 2f;
+    public float minY = 1.4f;
+    public float maxY = 5.5f;
 
     [Header("Volume Settings")]
     public float minVolume = 0f;
@@ -54,7 +54,7 @@ public class HeightToVolume : MonoBehaviour
         // volume smoothing line
         audioSource.volume = Mathf.Lerp(audioSource.volume, targetVolume, Time.deltaTime * smoothSpeed);
 
-        //glow effect synced with height (test)
+        //glow effect synced with height
         if (mat != null)
         {
             float emissionStrength = normalizedY * maxEmission;

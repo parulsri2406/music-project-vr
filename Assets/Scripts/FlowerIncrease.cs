@@ -1,10 +1,19 @@
 using UnityEngine;
 
-public class FlowerIncrease : MonoBehaviour
+public class VolumeStepButton : MonoBehaviour
 {
-    public bool increase = true; 
+    public bool increase = true; // true = increase, false = decrease
+    public Transform hand;
+    public Renderer flowerRenderer;
+
+    private Material flowerMaterial;
 
     private float[] volumeSteps = { 0f, 0.25f, 0.5f, 0.75f, 1f };
+
+    private void Start()
+    {
+        flowerMaterial = flowerRenderer.material;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -30,5 +39,24 @@ public class FlowerIncrease : MonoBehaviour
 
             AudioListener.volume = volumeSteps[closestIndex];
         }
+    }
+
+    private void Update()
+    {
+        float proximity = 0f;
+
+        if (hand != null)
+        {
+            float distance = Vector3.Distance(hand.position, transform.position);
+            proximity = Mathf.Clamp01(1f - (distance / 2f)); 
+        }
+
+        // color change instead of emission (guaranteed to work)
+        Color idleColor = new Color(0.5f, 0.2f, 0.4f);   // darker pink
+        Color activeColor = new Color(1f, 0.85f, 0.92f);   // bright pink
+
+        Color finalColor = Color.Lerp(idleColor, activeColor, proximity);
+
+        flowerMaterial.color = finalColor;
     }
 }
