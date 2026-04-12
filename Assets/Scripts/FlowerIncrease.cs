@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class VolumeStepButton : MonoBehaviour
+public class FlowerIncrease : MonoBehaviour
 {
     public bool increase = true; // true = increase, false = decrease
     public Transform hand;
@@ -10,9 +10,14 @@ public class VolumeStepButton : MonoBehaviour
 
     private float[] volumeSteps = { 0f, 0.25f, 0.5f, 0.75f, 1f };
 
+    // bounce variables
+    private Vector3 originalScale;
+    private float bounceTimer = 0f;
+
     private void Start()
     {
         flowerMaterial = flowerRenderer.material;
+        originalScale = transform.localScale;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -38,25 +43,41 @@ public class VolumeStepButton : MonoBehaviour
                 closestIndex--;
 
             AudioListener.volume = volumeSteps[closestIndex];
+
+            // trigger bounce
+            bounceTimer = 0.2f;
         }
     }
 
     private void Update()
     {
+        // 🌸 proximity glow
         float proximity = 0f;
 
         if (hand != null)
         {
             float distance = Vector3.Distance(hand.position, transform.position);
-            proximity = Mathf.Clamp01(1f - (distance / 2f)); 
+            proximity = Mathf.Clamp01(1f - (distance / 2f));
         }
 
-        // color change instead of emission (guaranteed to work)
-        Color idleColor = new Color(0.5f, 0.2f, 0.4f);   // darker pink
-        Color activeColor = new Color(1f, 0.85f, 0.92f);   // bright pink
+        // soft pink colors
+        Color idleColor = new Color(0.6f, 0.3f, 0.5f);
+        Color activeColor = new Color(1f, 0.85f, 0.92f);
 
         Color finalColor = Color.Lerp(idleColor, activeColor, proximity);
-
         flowerMaterial.color = finalColor;
+
+        // 🌸 bounce feedback
+        if (bounceTimer > 0)
+        {
+            bounceTimer -= Time.deltaTime;
+
+            float scaleOffset = Mathf.Sin((bounceTimer / 0.2f) * Mathf.PI) * 0.2f;
+            transform.localScale = originalScale * (1f + scaleOffset);
+        }
+        else
+        {
+            transform.localScale = originalScale;
+        }
     }
 }
